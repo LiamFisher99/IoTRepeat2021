@@ -3,35 +3,52 @@
 // S00213321
 // Internet of Things Repeat Assignment
 
-int analogInPin = A5;  // Analog input pin that the potentiometer is attached to
+// pin numbers
+const int trigPin = 9;
+const int echoPin = 10;
+const int buzzer = 11;
+const int ledPin = 13;
 
-int out =13;
-int sensorValue = 0;        // value read from the pot
-
+// variables
+long duration;
+int distance;
+int safeDistance;
 
 void setup() {
-  // initialize serial communications at 9600 bps:
-  Serial.begin(9600);
-  pinMode(out, OUTPUT);
+pinMode (trigPin, OUTPUT); // sets trigpin as output
+pinMode (echoPin, INPUT); // sets echopin as input
+pinMode (buzzer, OUTPUT);
+pinMode (ledPin, OUTPUT);
+Serial.begin(9600); // starts serial communication
 }
 
 void loop() {
-  // read the analog in value:
-  sensorValue = analogRead(analogInPin);
+// clear trigpin
+digitalWrite(trigPin, LOW);
+delayMicroseconds(2);
 
+// sets the trigPin on HIGH for 10 microseconds
+digitalWrite(trigPin, HIGH);
+delayMicroseconds(10);
+digitalWrite(trigPin, LOW);
 
-  Serial.print("sensor = " );
-  Serial.println(sensorValue);
+// reads echopin and returns sound wave
+duration = pulseIn(echoPin, HIGH);
 
-  delay(200);
-  
-  if(sensorValue<500)
-  {
-    digitalWrite(out,1);
-  }
-  else
-  {
-    digitalWrite(out,0);
-  }
-  
+// calculating the distance
+distance = duration*0.0034/2;
+
+saferDistance = distance;
+if (saferDistance <= 5) {
+digitalWrite(buzzer, HIGH);
+digitalWrite(ledPin, HIGH);
 }
+else {
+digitalWrite(buzzer, LOW);
+}
+
+// prints the distance on serial monitor 
+Serial.print("Distance: ");
+Serial.printIn(distance);
+}
+// serial monitor not connected
